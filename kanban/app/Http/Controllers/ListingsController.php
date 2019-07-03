@@ -22,26 +22,25 @@ class ListingsController extends Controller
         $listings = Listing::where('user_id', Auth::user()->id)
             ->orderBy('created_at', 'asc')
             ->get();
-            
-         // テンプレート「listing/index.blade.php」を表示します。
+
+        // テンプレート「listing/index.blade.php」を表示します。
         return view('listing/index', ['listings' => $listings]);
     }
 
     public function new()
     {
-         // テンプレート「listing/new.blade.php」を表示します。
+        // テンプレート「listing/new.blade.php」を表示します。
         return view('listing/new');
-        
+
     }
 
     public function store(Request $request)
     {
         //バリデーション（入力値チェック）
-        $validator = Validator::make($request->all() , ['list_name' => 'required|max:255', ]);
+        $validator = Validator::make($request->all(), ['list_name' => 'required|max:255',]);
 
         //バリデーションの結果がエラーの場合
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
 
@@ -58,25 +57,31 @@ class ListingsController extends Controller
     public function edit($listing_id)
     {
         $listing = Listing::find($listing_id);
-         // テンプレート「listing/edit.blade.php」を表示します。
+        // テンプレート「listing/edit.blade.php」を表示します。
         return view('listing/edit', ['listing' => $listing]);
     }
 
     public function update(Request $request)
     {
         //バリデーション（入力値チェック）
-        $validator = Validator::make($request->all() , ['list_name' => 'required|max:255', ]);
+        $validator = Validator::make($request->all(), ['list_name' => 'required|max:255',]);
 
         //バリデーションの結果がエラーの場合
-        if ($validator->fails())
-        {
-          // フォームの入力値は保持する
-          return redirect()->back()->withErrors($validator->errors())->withInput();
+        if ($validator->fails()) {
+            // フォームの入力値は保持する
+            return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        
+
         $listing = Listing::find($request->id);
         $listing->title = $request->list_name;
         $listing->save();
+        return redirect('/');
+    }
+
+    public function destroy($listing_id)
+    {
+        $lising = Listing::find($listing_id);
+        $lising->delete();
         return redirect('/');
     }
 }
